@@ -242,7 +242,7 @@ def apply_shift(text, shift):
     ### TODO.
     return apply_coder(text, build_encoder(shift))
 
-print(apply_shift('This is a test.', 8))
+##print(apply_shift('This is a test.', 8))
 
 #
 # Problem 2: Codebreaking.
@@ -264,7 +264,29 @@ def find_best_shift(wordlist, text):
     'Hello, world!'
     """
     ### TODO
-   
+    max_word_counts = 0
+    best_shift = 0
+    for i in range(27):
+        temp_text = apply_shift(text, -i)
+##        print("current shift is: " + str(i) + "--temp_text: " + temp_text)
+        counter = 0
+        words = temp_text.split()
+##        print("splitted:", words)
+        for w in words:
+            if is_word(wordlist, w):
+                counter += 1
+        if max_word_counts < counter:
+            max_word_counts = counter
+            best_shift = i
+    return best_shift
+
+##s = apply_coder('Hello, world!', build_encoder(8))
+##print(s)
+##shift = find_best_shift(wordlist, s)
+##print("best shift is:", shift)
+##print(apply_coder(s, build_decoder(shift)))
+
+     
 #
 # Problem 3: Multi-level encryption.
 #
@@ -285,7 +307,10 @@ def apply_shifts(text, shifts):
     'JufYkaolfapxQdrnzmasmRyrpfdvpmEurrb?'
     """
     ### TODO.
- 
+    
+
+
+         
 #
 # Problem 4: Multi-level decryption.
 #
