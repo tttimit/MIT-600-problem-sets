@@ -121,7 +121,17 @@ def build_coder(shift):
     (The order of the key-value pairs may be different.)
     """
     ### TODO.
+    u_chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ '
+    l_chars = 'abcdefghijklmnopqrstuvwxyz '
+    result = {}
+    for i in range(26):
+        result[u_chars[i]] = u_chars[(i + shift)%27]
+        result[l_chars[i]] = l_chars[(i + shift)%27]
+    result[' '] = l_chars[(26 + shift) % 27]
+    return result
 
+##print(build_coder(3))
+    
 def build_encoder(shift):
     """
     Returns a dict that can be used to encode a plain text. For example, you
@@ -150,7 +160,7 @@ def build_encoder(shift):
     HINT : Use build_coder.
     """
     ### TODO.
-    
+    return build_coder(shift)
     
 def build_decoder(shift):
     """
@@ -181,7 +191,7 @@ def build_decoder(shift):
     HINT : Use build_coder.
     """
     ### TODO.
- 
+    return build_coder(-shift)
 
 def apply_coder(text, coder):
     """
@@ -198,7 +208,19 @@ def apply_coder(text, coder):
     'Hello, world!'
     """
     ### TODO.
-  
+    result = ''
+    for char in text:
+        if char not in coder:
+            result += char
+        else:
+            result += coder[char]
+    return result
+
+##a = apply_coder("Hello, world!", build_encoder(3))
+##print(a)
+##print(apply_coder(a, build_decoder(3)))
+
+
 
 def apply_shift(text, shift):
     """
@@ -218,7 +240,10 @@ def apply_shift(text, shift):
     'Apq hq hiham a.'
     """
     ### TODO.
-   
+    return apply_coder(text, build_encoder(shift))
+
+print(apply_shift('This is a test.', 8))
+
 #
 # Problem 2: Codebreaking.
 #
