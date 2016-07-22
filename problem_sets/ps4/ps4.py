@@ -7,6 +7,7 @@ import random
 
 WORDLIST_FILENAME = "words.txt"
 
+
 # -----------------------------------
 # Helper code
 # (you don't need to understand this helper code)
@@ -27,7 +28,9 @@ def load_words():
     print("  ", len(wordlist), "words loaded.")
     return wordlist
 
+
 wordlist = load_words()
+
 
 def is_word(wordlist, word):
     """
@@ -47,6 +50,7 @@ def is_word(wordlist, word):
     word = word.strip(" !@#$%^&*()-_+={}[]|\:;'<>?,./\"")
     return word in wordlist
 
+
 def random_word(wordlist):
     """
     Returns a random word.
@@ -56,6 +60,7 @@ def random_word(wordlist):
     """
     return random.choice(wordlist)
 
+
 def random_string(wordlist, n):
     """
     Returns a string containing n random words from wordlist
@@ -64,6 +69,7 @@ def random_string(wordlist, n):
     returns: a string of random words separated by spaces.
     """
     return " ".join([random_word(wordlist) for _ in range(n)])
+
 
 def random_scrambled(wordlist, n):
     """
@@ -80,8 +86,9 @@ def random_scrambled(wordlist, n):
     implementation of apply_shifts!
     """
     s = random_string(wordlist, n) + " "
-    shifts = [(i, random.randint(0, 26)) for i in range(len(s)) if s[i-1] == ' ']
+    shifts = [(i, random.randint(0, 26)) for i in range(len(s)) if s[i - 1] == ' ']
     return apply_shifts(s, shifts)[:-1]
+
 
 def get_fable_string():
     """
@@ -125,13 +132,14 @@ def build_coder(shift):
     l_chars = 'abcdefghijklmnopqrstuvwxyz '
     result = {}
     for i in range(26):
-        result[u_chars[i]] = u_chars[(i + shift)%27]
-        result[l_chars[i]] = l_chars[(i + shift)%27]
+        result[u_chars[i]] = u_chars[(i + shift) % 27]
+        result[l_chars[i]] = l_chars[(i + shift) % 27]
     result[' '] = l_chars[(26 + shift) % 27]
     return result
 
+
 ##print(build_coder(3))
-    
+
 def build_encoder(shift):
     """
     Returns a dict that can be used to encode a plain text. For example, you
@@ -161,7 +169,8 @@ def build_encoder(shift):
     """
     ### TODO.
     return build_coder(shift)
-    
+
+
 def build_decoder(shift):
     """
     Returns a dict that can be used to decode an encrypted text. For example, you
@@ -193,6 +202,7 @@ def build_decoder(shift):
     ### TODO.
     return build_coder(-shift)
 
+
 def apply_coder(text, coder):
     """
     Applies the coder to the text. Returns the encoded text.
@@ -215,6 +225,7 @@ def apply_coder(text, coder):
         else:
             result += coder[char]
     return result
+
 
 ##a = apply_coder("Hello, world!", build_encoder(3))
 ##print(a)
@@ -239,8 +250,9 @@ def apply_shift(text, shift):
     >>> apply_shift('This is a test.', 8)
     'Apq hq hiham a.'
     """
-    ### TODO.
+    # TODO.
     return apply_coder(text, build_encoder(shift))
+
 
 ##print(apply_shift('This is a test.', 8))
 
@@ -268,10 +280,10 @@ def find_best_shift(wordlist, text):
     best_shift = 0
     for i in range(27):
         temp_text = apply_shift(text, -i)
-##        print("current shift is: " + str(i) + "--temp_text: " + temp_text)
+        ##        print("current shift is: " + str(i) + "--temp_text: " + temp_text)
         counter = 0
         words = temp_text.split()
-##        print("splitted:", words)
+        ##        print("splitted:", words)
         for w in words:
             if is_word(wordlist, w):
                 counter += 1
@@ -280,13 +292,14 @@ def find_best_shift(wordlist, text):
             best_shift = i
     return best_shift
 
+
 ##s = apply_coder('Hello, world!', build_encoder(8))
 ##print(s)
 ##shift = find_best_shift(wordlist, s)
 ##print("best shift is:", shift)
 ##print(apply_coder(s, build_decoder(shift)))
 
-     
+
 #
 # Problem 3: Multi-level encryption.
 #
@@ -313,12 +326,13 @@ def apply_shifts(text, shifts):
         text = text[:s_loc] + apply_shift(text[s_loc:], s_shift)
     return text
 
+
 ##s = "Do Androids Dream of Electric Sheep?"
 ##shifts = [(0, 6), (3, 18), (12, 16)]
 ##out = apply_shifts(s, shifts)
 ##print(out)
 
-         
+
 #
 # Problem 4: Multi-level decryption.
 #
@@ -357,39 +371,45 @@ def find_best_shifts(wordlist, text):
     print("-------")
     for i in range(27):
         temp_text = apply_shift(text[s:], -i)
-        print("i=" + str(i), "temp_text \'" + temp_text + "\'")
-        if ' ' not in temp_text:
-##            print("check \'" + temp_text + "\' is a valid word")
-            if is_word(wordlist, temp_text):
-                print("\'" + temp_text + "\' is a valid word")
-                shifts += [(s, i), ]
-        else:
-            index = temp_text.find(' ', s)
+        ##        print("i=" + str(i), "temp_text \'" + temp_text + "\'")
+        if ' ' not in temp_text and is_word(wordlist, temp_text):
+            ##            print("check \'" + temp_text + "\' is a valid word")
+            ##            print("\'" + temp_text + "\' is a valid word, end")
+            shifts += [(s, i), ]
+            break
+        elif temp_text.find(' ') != -1:
+            index = temp_text.find(' ')
             word = temp_text[s: index]
-##            print("check \'" + word + "\' is a valid word")
+            ##            print("check \'" + word + "\' is a valid word")
             if is_word(wordlist, word):
-                print("\'" + word + "\' is a valid word. go on.")
+                ##                print("\'" + word + "\' is a valid word. go on.")
                 shifts += [(s, i), ]
-                s += index
-                shift = find_best_shifts(wordlist, temp_text[s + 1:])
-                shifts += [(shift[0]+s, shift[1]), ]
+                s += index + 1
+                shift = find_best_shifts(wordlist, temp_text[s:])
+                shifts += [(shift[0][0] + s, shift[0][1]), ]
+                break
     return shifts
 
 ##s = random_scrambled(wordlist, 3)
 ##s = 'eqorqukvqtbmultiform wyy ion'
 
-s = apply_shifts("life good", [(0, 2), (5, 3)])
+s1 = "life good"
+s2 = "life good right"
+shift1 = [(0, 2), (5, 3)]
+shift2 = [(0, 2), (5, 3), (10, 1)]
+# s = apply_shifts(s1, shift1)
+s = apply_shifts(s2, shift2)
 print("s:", s)
 shifts = find_best_shifts(wordlist, s)
 print("find shifts:", shifts)
+#
+# print("shifts:", shifts)
+# b = apply_shifts("Do Androids Dream of Electric Sheep?", [(0, 6), (3, 18), (12, 16)])
+# print("b:", b)
+# shifts = find_best_shifts(wordlist, b)
+# print(apply_shifts(s, shifts))
 
-##print("shifts:", shifts)
-##b = apply_shifts("Do Androids Dream of Electric Sheep?", [(0, 6), (3, 18), (12, 16)])
-##print("b:", b)
-##shifts = find_best_shifts(wordlist, b)
-##print(apply_shifts(s, shifts))
-    
-    
+
 def find_best_shifts_rec(wordlist, text, start):
     """
     Given a scrambled string and a starting position from which
@@ -408,24 +428,20 @@ def find_best_shifts_rec(wordlist, text, start):
 
 
 def decrypt_fable():
-     """
-    Using the methods you created in this problem set,
-    decrypt the fable given by the function get_fable_string().
-    Once you decrypt the message, be sure to include as a comment
-    at the end of this problem set how the fable relates to your
-    education at MIT.
-
-    returns: string - fable in plain text
     """
+   Using the methods you created in this problem set,
+   decrypt the fable given by the function get_fable_string().
+   Once you decrypt the message, be sure to include as a comment
+   at the end of this problem set how the fable relates to your
+   education at MIT.
+
+   returns: string - fable in plain text
+   """
     ### TODO.
 
-
-
-    
-#What is the moral of the story?
+# What is the moral of the story?
 #
 #
 #
 #
 #
-
