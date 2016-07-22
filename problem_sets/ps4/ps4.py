@@ -307,8 +307,16 @@ def apply_shifts(text, shifts):
     'JufYkaolfapxQdrnzmasmRyrpfdvpmEurrb?'
     """
     ### TODO.
-    
+    for s in shifts:
+        s_loc = s[0]
+        s_shift = s[1]
+        text = text[:s_loc] + apply_shift(text[s_loc:], s_shift)
+    return text
 
+##s = "Do Androids Dream of Electric Sheep?"
+##shifts = [(0, 6), (3, 18), (12, 16)]
+##out = apply_shifts(s, shifts)
+##print(out)
 
          
 #
@@ -344,7 +352,44 @@ def find_best_shifts(wordlist, text):
     >>> print apply_shifts(s, shifts)
     Do Androids Dream of Electric Sheep?
     """
+    shifts = []
+    s = 0
+    print("-------")
+    for i in range(27):
+        temp_text = apply_shift(text[s:], -i)
+        print("i=" + str(i), "temp_text \'" + temp_text + "\'")
+        if ' ' not in temp_text:
+##            print("check \'" + temp_text + "\' is a valid word")
+            if is_word(wordlist, temp_text):
+                print("\'" + temp_text + "\' is a valid word")
+                shifts += [(s, i), ]
+        else:
+            index = temp_text.find(' ', s)
+            word = temp_text[s: index]
+##            print("check \'" + word + "\' is a valid word")
+            if is_word(wordlist, word):
+                print("\'" + word + "\' is a valid word. go on.")
+                shifts += [(s, i), ]
+                s += index
+                shift = find_best_shifts(wordlist, temp_text[s + 1:])
+                shifts += [(shift[0]+s, shift[1]), ]
+    return shifts
 
+##s = random_scrambled(wordlist, 3)
+##s = 'eqorqukvqtbmultiform wyy ion'
+
+s = apply_shifts("life good", [(0, 2), (5, 3)])
+print("s:", s)
+shifts = find_best_shifts(wordlist, s)
+print("find shifts:", shifts)
+
+##print("shifts:", shifts)
+##b = apply_shifts("Do Androids Dream of Electric Sheep?", [(0, 6), (3, 18), (12, 16)])
+##print("b:", b)
+##shifts = find_best_shifts(wordlist, b)
+##print(apply_shifts(s, shifts))
+    
+    
 def find_best_shifts_rec(wordlist, text, start):
     """
     Given a scrambled string and a starting position from which
