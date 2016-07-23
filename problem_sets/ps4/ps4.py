@@ -368,46 +368,52 @@ def find_best_shifts(wordlist, text):
     """
     shifts = []
     s = 0
-    print("-------")
+##    print("---")
     for i in range(27):
         temp_text = apply_shift(text[s:], -i)
-        ##        print("i=" + str(i), "temp_text \'" + temp_text + "\'")
+##        print("s=" + str(s) + " i=" + str(i), " temp_text=\'" + temp_text + "\'")
         if ' ' not in temp_text and is_word(wordlist, temp_text):
-            ##            print("check \'" + temp_text + "\' is a valid word")
-            ##            print("\'" + temp_text + "\' is a valid word, end")
+##            print("check \'" + temp_text + "\' is a valid word")
+##            print("\'" + temp_text + "\' is a valid word, end")
             shifts += [(s, i), ]
             break
         elif temp_text.find(' ') != -1:
             index = temp_text.find(' ')
             word = temp_text[s: index]
-            ##            print("check \'" + word + "\' is a valid word")
+##            print("check \'" + word + "\' is a valid word")
             if is_word(wordlist, word):
-                ##                print("\'" + word + "\' is a valid word. go on.")
+##                print("\'" + word + "\' is a valid word. go on.")
                 shifts += [(s, i), ]
                 s += index + 1
                 shift = find_best_shifts(wordlist, temp_text[s:])
-                shifts += [(shift[0][0] + s, shift[0][1]), ]
+                for i in shift:
+                    if i[1] != 0:
+                        shifts += [(i[0] + s, i[1]), ]
                 break
     return shifts
 
-##s = random_scrambled(wordlist, 3)
-##s = 'eqorqukvqtbmultiform wyy ion'
 
-s1 = "life good"
-s2 = "life good right"
-shift1 = [(0, 2), (5, 3)]
-shift2 = [(0, 2), (5, 3), (10, 1)]
-# s = apply_shifts(s1, shift1)
-s = apply_shifts(s2, shift2)
-print("s:", s)
-shifts = find_best_shifts(wordlist, s)
-print("find shifts:", shifts)
-#
-# print("shifts:", shifts)
-# b = apply_shifts("Do Androids Dream of Electric Sheep?", [(0, 6), (3, 18), (12, 16)])
-# print("b:", b)
-# shifts = find_best_shifts(wordlist, b)
-# print(apply_shifts(s, shifts))
+##s1 = "life good"
+##s2 = "life good right"
+##s3 = "Do Androids Dream of Electric Sheep?"
+##shift1 = [(0, 2), (5, 3)]
+##shift2 = [(0, 2), (5, 3), (10, 1)]
+##shift3 = [(0, 6), (3, 18), (12, 16)]
+##s = apply_shifts(s1, shift1)
+##s = apply_shifts(s2, shift2)
+##s = apply_shifts(s3, shift3)
+##print("s:", s)
+##shifts = find_best_shifts(wordlist, s)
+##print("find shifts:", shifts)
+##
+
+##s = "let us know your wish"
+##print("s:", s)
+##b = apply_shifts(s, [(0, 6), (4, 18), (12, 16), (17, 8)])
+##print("b:", b)
+##shifts = find_best_shifts(wordlist, b)
+##print("shifts", shifts)
+##print(apply_shifts(s, shifts))
 
 
 def find_best_shifts_rec(wordlist, text, start):
@@ -425,8 +431,22 @@ def find_best_shifts_rec(wordlist, text, start):
     returns: list of tuples.  each tuple is (position in text, amount of shift)
     """
     ### TODO.
-
-
+    # Done in the previous function.
+    shifts = []
+    for i in range(27):
+        text = apply_shift(text, -i)
+        if ' ' not in text and is_word(wordlist, text):
+            return  (start, i)
+        elif ' ' in text:
+            index = text.find(' ')
+            word = text[: index]
+            if is_word(wordlist, word):
+                shifts.append((start, i))
+                shifts.append(find_best_shifts_rec(wordlist, text[index + 1:], start + index))
+            return shifts
+        
+                
+    
 def decrypt_fable():
     """
    Using the methods you created in this problem set,
@@ -438,7 +458,17 @@ def decrypt_fable():
    returns: string - fable in plain text
    """
     ### TODO.
+    fable = get_fable_string()
+    shifts = find_best_shifts(wordlist, fable)
+##    print("shift:", shifts)
+    for s in shifts:
+        fable = fable[:s[0]] + apply_shift(fable[s[0]:], -s[1])
+##        print("result=\'" + fable + "\'")
+    return fable
 
+##print(decrypt_fable())
+
+    
 # What is the moral of the story?
 #
 #
