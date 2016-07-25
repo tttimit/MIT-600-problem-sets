@@ -22,12 +22,13 @@ def find_best_shifts(wordlist, text):
 ##s = random_scrambled(wordlist, 3)
 ##s = 'eqorqukvqtbmultiform wyy ion'
 
-s1 = "life good"
-s2 = "life good right"
-shift1 = [(0, 2), (5, 3)]
-shift2 = [(0, 2), (5, 3), (10, 1)]
-##s = apply_shifts(s1, shift1)
-s = apply_shifts(s2, shift2)
-print("s:", s)
-shifts = find_best_shifts(wordlist, s)
-print("result:", shifts)
+##s1 = "life good"
+##s2 = "life good right"
+##shift1 = [(0, 2), (5, 3)]
+##shift2 = [(0, 2), (5, 3), (10, 1)]
+####s = apply_shifts(s1, shift1)
+##s = apply_shifts(s2, shift2)
+##print("s:", s)
+##shifts = find_best_shifts(wordlist, s)
+##print("result:", shifts)
+
