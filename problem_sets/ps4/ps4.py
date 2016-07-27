@@ -47,7 +47,7 @@ def is_word(wordlist, word):
     False
     """
     word = word.lower()
-    word = word.strip(" !@#$%^&*()-_+={}[]|\:;'<>?,./\"")
+    word = word.rstrip(" !@#$%^&*()-_+={}[]|\:;'<>?,./\"")
     return word in wordlist
 
 
@@ -368,10 +368,10 @@ def find_best_shifts(wordlist, text):
     """
     shifts = []
     s = 0
-##    print("---")
+    print("---")
     for i in range(27):
         temp_text = apply_shift(text[s:], -i)
-##        print("s=" + str(s) + " i=" + str(i), " temp_text=\'" + temp_text + "\'")
+        print("s=" + str(s) + " i=" + str(i), " temp_text=\'" + temp_text[0:10] + "\'")
         if ' ' not in temp_text and is_word(wordlist, temp_text):
 ##            print("check \'" + temp_text + "\' is a valid word")
 ##            print("\'" + temp_text + "\' is a valid word, end")
@@ -444,7 +444,8 @@ def find_best_shifts_rec(wordlist, text, start):
                 shifts.append((start, i))
                 shifts.append(find_best_shifts_rec(wordlist, text[index + 1:], start + index))
             return shifts
-        
+        else:
+            return None
                 
     
 def decrypt_fable():
@@ -466,7 +467,7 @@ def decrypt_fable():
 ##        print("result=\'" + fable + "\'")
     return fable
 
-##print(decrypt_fable())
+print(decrypt_fable())
 
     
 # What is the moral of the story?
