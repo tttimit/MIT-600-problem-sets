@@ -79,10 +79,54 @@ class Trigger(object):
 
 # Whole Word Triggers
 # Problems 2-5
-
+ 
 # TODO: WordTrigger
+class WordTrigger(Trigger):
+    def __init__(self, word):
+        self.word = word.lower()
+    def is_word_in(self, text):
+        """
+        Returns True if self.word presents in the
+        given argument text, or False otherwise.
+        Noticed that this method should NOT be 
+        casecsensitive.
+        """
+        word_list = []
+        word = ''
+        for c in text.lower():
+            if c in string.punctuation or c == ' ':
+##                print "will append: " + word
+                word_list.append(word)
+                word = ''
+            else:
+                word += c
+        if len(word) != 0:
+            word_list.append(word)
+##        print self.word, "; word_list", word_list
+        if self.word in word_list:
+            return True
+        else:
+            return False
 
+############ TEST  
+##word = 'soft'
+##text1 = "microsoft go!"
+##text2 = "this is soft"
+##w = WordTrigger(word)
+##print w.is_word_in(text1)
+##print w.is_word_in(text2)
+##############
+        
 # TODO: TitleTrigger
+class TitleTrigger(WordTrigger):
+    def __init__(self, title):
+        self.word = title.lower()
+    def evaluate(self, story):
+        return WordTrigger.is_word_in(self, story.title)
+
+        
+
+    
 # TODO: SubjectTrigger
 # TODO: SummaryTrigger
 
@@ -186,8 +230,8 @@ def main_thread(p):
         time.sleep(SLEEPTIME)
 
 SLEEPTIME = 60 #seconds -- how often we poll
-if __name__ == '__main__':
-    p = Popup()
-    thread.start_new_thread(main_thread, (p,))
-    p.start()
+##if __name__ == '__main__':
+##    p = Popup()
+##    thread.start_new_thread(main_thread, (p,))
+##    p.start()
 
