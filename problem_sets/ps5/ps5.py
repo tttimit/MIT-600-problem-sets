@@ -83,13 +83,13 @@ class Trigger(object):
 # TODO: WordTrigger
 class WordTrigger(Trigger):
     def __init__(self, word):
-        self.word = word.lower()
+        self.word = word
     def is_word_in(self, text):
         """
         Returns True if self.word presents in the
         given argument text, or False otherwise.
         Noticed that this method should NOT be 
-        casecsensitive.
+        case-sensitive.
         """
         word_list = []
         word = ''
@@ -103,12 +103,12 @@ class WordTrigger(Trigger):
         if len(word) != 0:
             word_list.append(word)
 ##        print self.word, "; word_list", word_list
-        if self.word in word_list:
+        if self.word.lower() in word_list:
             return True
         else:
             return False
 
-############ TEST  
+############ SELF TEST  
 ##word = 'soft'
 ##text1 = "microsoft go!"
 ##text2 = "this is soft"
@@ -120,30 +120,68 @@ class WordTrigger(Trigger):
 # TODO: TitleTrigger
 class TitleTrigger(WordTrigger):
     def __init__(self, title):
-        self.word = title.lower()
+        self.word = title
     def evaluate(self, story):
         return WordTrigger.is_word_in(self, story.title)
 
-        
-
     
 # TODO: SubjectTrigger
-# TODO: SummaryTrigger
+class SubjectTrigger(WordTrigger):
+    def __init__(self, subject):
+        self.word = subject
+    def evaluate(self, story):
+        return WordTrigger.is_word_in(self, story.subject)
 
+
+# TODO: SummaryTrigger
+class SummaryTrigger(WordTrigger):
+    def __init__(self, summary):
+        self.word = summary
+    def evaluate(self, story):
+        return WordTrigger.is_word_in(self, story.summary)
 
 # Composite Triggers
 # Problems 6-8
 
 # TODO: NotTrigger
-# TODO: AndTrigger
-# TODO: OrTrigger
+class NotTrigger(Trigger):
+    def __init__(self, trigger):
+        self.trigger = trigger
+    def evaluate(self, story):
+        return not self.trigger.evaluate(story)
 
+# TODO: AndTrigger
+class AndTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.t1 = trigger1
+        self.t2 = trigger2
+    def evaluate(self, story):
+        return self.t1.evaluate(story) and self.t2.evaluate(story)
+
+# TODO: OrTrigger
+class OrTrigger(Trigger):
+    def __init__(self, trigger1, trigger2):
+        self.t1 = trigger1
+        self.t2 = trigger2
+    def evaluate(self, story):
+        return self.t1.evaluate(story) or self.t2.evaluate(story)
 
 # Phrase Trigger
 # Question 9
 
 # TODO: PhraseTrigger
-
+class PhraseTrigger(Trigger):
+    def __init__(self, word):
+        self.word = word
+    def evaluate(self, story):
+        if self.word in story.title:
+            return True
+        elif self.word in story.subject:
+            return True
+        elif self.word in story.summary:
+            return True
+        else:
+            return False
 
 #======================
 # Part 3
@@ -158,8 +196,13 @@ def filter_stories(stories, triggerlist):
     """
     # TODO: Problem 10
     # This is a placeholder (we're just returning all the stories, with no filtering) 
-    # Feel free to change this line!
-    return stories
+    # Feel freeto change this line!
+    results = []
+    for s in stories:
+        for t in triggerlist:
+            if t.evaluate(s):
+                results.append(stories)
+    return results
 
 #======================
 # Part 4
@@ -187,6 +230,7 @@ def readTriggerConfig(filename):
     # 'lines' has a list of lines you need to parse
     # Build a set of triggers from it and
     # return the appropriate ones
+    
     
 import thread
 
@@ -230,8 +274,8 @@ def main_thread(p):
         time.sleep(SLEEPTIME)
 
 SLEEPTIME = 60 #seconds -- how often we poll
-##if __name__ == '__main__':
-##    p = Popup()
-##    thread.start_new_thread(main_thread, (p,))
-##    p.start()
+if __name__ == '__main__':
+    p = Popup()
+    thread.start_new_thread(main_thread, (p,))
+    p.start()
 
