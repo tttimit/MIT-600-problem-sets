@@ -230,7 +230,57 @@ def readTriggerConfig(filename):
     # 'lines' has a list of lines you need to parse
     # Build a set of triggers from it and
     # return the appropriate ones
-    
+    triggers = []
+    index = 1   #trigger index
+    for single_line in lines:
+        word_list = []
+        word = ''
+        count = 0
+        for char in single_line:
+            if count == 2:
+                word += char
+                continue
+            if char in string.punctuation or char == ' ':
+                word_list.append(word)
+                word = ''
+                count += 1
+            else:
+                word += char
+        word_list.append(word)
+        word = ''
+        print "word_list", word_list
+        trigger_dict = {}
+        if word_list[0] == "AND":
+            t1 = trigger_dict[word_list[1]]
+            t2 = trigger_dict[word_list[2]]
+            triggers.append(AndTriggers(t1, t2))
+        elif word_list[0] == "OR":
+            t1 = trigger_dict[word_list[1]]
+            t2 = trigger_dict[word_list[2]]
+            triggers.append(OrTriggers(t1, t2))
+        elif word_list[1] == "NOT":
+            t = trigger_dict[word_list[1]]
+            triggers.append(NotTrigger(t))
+        else:
+            if word_list[1] == "TITLE":
+                t = TitleTrigger(word_list[2])  
+            elif word_list[1] == "SUBJECT":
+                t = SubjectTrigger(word_list[2])
+            elif word_list[1] == "PHRASE":
+                t = PhraseTrigger(word_list[2])
+            elif word_list[1] == "SUMMARY":
+                t =  SummaryTrigger(word_list[2])
+            else:
+                raise TypeError("config file error!")
+            trigger_dict[word_list[0]] = t
+            triggers.append(t)
+    return triggers
+            
+
+
+# SELF TEST
+readTriggerConfig("triggers.txt")
+            
     
 import thread
 
