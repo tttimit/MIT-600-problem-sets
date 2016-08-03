@@ -201,7 +201,7 @@ def filter_stories(stories, triggerlist):
     for s in stories:
         for t in triggerlist:
             if t.evaluate(s):
-                results.append(stories)
+                results.append(s)
     return results
 
 #======================
@@ -231,55 +231,63 @@ def readTriggerConfig(filename):
     # Build a set of triggers from it and
     # return the appropriate ones
     triggers = []
+    trigger_dict = {}
     index = 1   #trigger index
     for single_line in lines:
         word_list = []
         word = ''
-        count = 0
         for char in single_line:
-            if count == 2:
-                word += char
-                continue
             if char in string.punctuation or char == ' ':
                 word_list.append(word)
                 word = ''
-                count += 1
             else:
                 word += char
         word_list.append(word)
         word = ''
         print "word_list", word_list
-        trigger_dict = {}
-        if word_list[0] == "AND":
-            t1 = trigger_dict[word_list[1]]
-            t2 = trigger_dict[word_list[2]]
-            triggers.append(AndTriggers(t1, t2))
-        elif word_list[0] == "OR":
-            t1 = trigger_dict[word_list[1]]
-            t2 = trigger_dict[word_list[2]]
-            triggers.append(OrTriggers(t1, t2))
+        if word_list[1] == "AND":
+            t1 = trigger_dict[word_list[2]]
+            t2 = trigger_dict[word_list[3]]
+            t = AndTrigger(t1, t2)
+            trigger_dict[word_list[0]] = t
+        elif word_list[1] == "OR":
+            t1 = trigger_dict[word_list[2]]
+            t2 = trigger_dict[word_list[3]]
+            trigger_dict[word_list[0]] = OrTrigger(t1, t2)
         elif word_list[1] == "NOT":
             t = trigger_dict[word_list[1]]
-            triggers.append(NotTrigger(t))
+        elif word_list[0] == "ADD":
+            for i in range(1, len(word_list)):
+                t = trigger_dict[word_list[i]]
+                triggers.append(t)
         else:
             if word_list[1] == "TITLE":
-                t = TitleTrigger(word_list[2])  
+                t = TitleTrigger(word_list[2])
+                trigger_dict[word_list[0]] = t
             elif word_list[1] == "SUBJECT":
                 t = SubjectTrigger(word_list[2])
+                trigger_dict[word_list[0]] = t
             elif word_list[1] == "PHRASE":
-                t = PhraseTrigger(word_list[2])
+                phrase = ''
+                for i in range(2, len(word_list)):
+                    if i == len(word_list):
+                        phrase += word_list[i]
+                    else:
+                        phrase += word_list[i] + " "
+                t = PhraseTrigger(phrase)
+                trigger_dict[word_list[0]] = t
             elif word_list[1] == "SUMMARY":
                 t =  SummaryTrigger(word_list[2])
+                trigger_dict[word_list[0]] = t
             else:
                 raise TypeError("config file error!")
-            trigger_dict[word_list[0]] = t
-            triggers.append(t)
+    
     return triggers
             
 
 
-# SELF TEST
-readTriggerConfig("triggers.txt")
+### SELF TEST
+##readTriggerConfig("triggers.txt")
             
     
 import thread
@@ -287,15 +295,15 @@ import thread
 def main_thread(p):
     # A sample trigger list - you'll replace
     # this with something more configurable in Problem 11
-    t1 = SubjectTrigger("Obama")
-    t2 = SummaryTrigger("MIT")
-    t3 = PhraseTrigger("Supreme Court")
-    t4 = OrTrigger(t2, t3)
-    triggerlist = [t1, t4]
+##    t1 = SubjectTrigger("Obama")
+##    t2 = SummaryTrigger("MIT")
+##    t3 = PhraseTrigger("Supreme Court")
+##    t4 = OrTrigger(t2, t3)
+##    triggerlist = [t1, t4]
     
     # TODO: Problem 11
     # After implementing readTriggerConfig, uncomment this line 
-    #triggerlist = readTriggerConfig("triggers.txt")
+    triggerlist = readTriggerConfig("triggers.txt")
 
     guidShown = []
     
