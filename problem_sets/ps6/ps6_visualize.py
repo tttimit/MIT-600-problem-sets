@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Problem Set 6:
 # Visualization code for simulated robots.
 #
