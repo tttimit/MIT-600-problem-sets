@@ -1,6 +1,7 @@
-##import matplotlib
+# -*- coding: utf-8 -*-
+import matplotlib.pyplot as pylab
 import numpy
-import pylab
+# import pylab
 
 data = [(4.9,'2011/03/12 23:57:34'),
 (4.9,'2011/03/12 23:53:45'),
