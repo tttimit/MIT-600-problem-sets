@@ -61,9 +61,9 @@ def simulation(number_trials):
         if g.is_same():
             good_shot += 1
     print("prob is:", float(good_shot) / number_trials)
-    print("1/36 is:", 1.0 / 36)
+    print("1/30 is:", 1.0 / 30)
 
-simulation(10000000)
+simulation(5000000)
     
 
             
