@@ -26,8 +26,9 @@ class MyList(list, metaclass=ListMetaclass):
 L = MyList()
 L.add(1)
 L.add(2)
+L.append(3)
 print(L)
 
 #但是普通的list并没有 add()方法
 L2 = list()
-L2.add(1)
+##L2.add(1)
